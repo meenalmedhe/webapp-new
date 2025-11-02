@@ -7,9 +7,24 @@ env:
 phases:
   pre_build:
     commands:
-    - echo logging in to ECR...
+    - echo logging in to Amazon ECR...
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO
+  
+build:
+  commands:
+    - echo Building the Docker images...
     - docker build -t webapp .
     - docker tag webapp:latest $ECR_REPO/webapp:latest
     - docker push $ECR_REPO/webapp:latest
-    - echo push to ECR repository
+    - echo Image build and push complete.
+
+post_build:
+    commands:
+      - echo Updating kubernetes deployment...
+      - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+      - kubectl ge ns webapp || kubectl create namespace webapp
+      - kubectl apply -f k8-aws.yaml
+      - kubectl get pods -n webapp
+      - kubectl get svc -n webapp
+      - echo Deployment to EKS complete.
+
