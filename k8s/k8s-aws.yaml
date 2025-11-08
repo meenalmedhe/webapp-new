@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: webapp
-        image: 296062577418.dkr.ecr.ap-south-1.amazonaws.com/webapp:latest
+        image: 595960695514.dkr.ecr.ap-south-1.amazonaws.com/webapp:latest
         ports:
         - containerPort: 80
 ---
@@ -38,4 +38,5 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 8080
+      targetPort: 80
+  type: NodePort
